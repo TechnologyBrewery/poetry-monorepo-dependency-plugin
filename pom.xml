@@ -3,7 +3,7 @@
 
     <groupId>org.bitbucket.cpointe</groupId>
     <artifactId>poetry-monorepo-dependency-plugin</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
     <packaging>habushu</packaging>
 
     <name>Poetry Monorepo Dependency Plugin</name>
@@ -33,7 +33,7 @@ building and publishing archives with local path dependencies to other Poetry pr
         <connection>scm:git:ssh://git@bitbucket.org/cpointe/poetry-monorepo-dependency-plugin.git</connection>
         <developerConnection>scm:git:ssh://git@bitbucket.org/cpointe/poetry-monorepo-dependency-plugin.git</developerConnection>
         <url>https://bitbucket.org/cpointe/poetry-monorepo-dependency-plugin/</url>
-        <tag>HEAD</tag>
+        <tag>poetry-monorepo-dependency-plugin-1.0.1</tag>
     </scm>
 
     <properties>
