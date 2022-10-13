@@ -1,0 +1,11 @@
+[tool.poetry]
+name = "project-with-local-dependencies"
+version = "1.0.0"
+description = "Some description."
+authors = ["Some Developer <developer@email.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+spam = { path = "../spam", develop = true }
+ham = { path = "../ham", develop = true }
+eggs = { path = "../eggs", develop = true }
