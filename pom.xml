@@ -1,0 +1,92 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.bitbucket.cpointe</groupId>
+    <artifactId>poetry-monorepo-dependency-plugin</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>habushu</packaging>
+
+    <name>Poetry Monorepo Dependency Plugin</name>
+    <description>Poetry plugin facilitating the usage of more complex monorepo project structures by pinning version dependencies when
+building and publishing archives with local path dependencies to other Poetry projects within the same monorepo</description>
+
+    <url>https://bitbucket.org/cpointe/poetry-monorepo-dependency-plugin/</url>
+    <inceptionYear>2022</inceptionYear>
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Eric Konieczny</name>
+            <email>ekoniec1@cpointe-inc.com</email>
+            <organization>Counterpointe Solutions, Inc.</organization>
+            <organizationUrl>https://bitbucket.org/cpointe/</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:ssh://git@bitbucket.org/cpointe/poetry-monorepo-dependency-plugin.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.org/cpointe/poetry-monorepo-dependency-plugin.git</developerConnection>
+        <url>https://bitbucket.org/cpointe/poetry-monorepo-dependency-plugin/</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <properties>
+        <version.habushu.plugin>2.1.0</version.habushu.plugin>
+    </properties>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.bitbucket.cpointe.habushu</groupId>
+                    <artifactId>habushu-maven-plugin</artifactId>
+                    <version>${version.habushu.plugin}</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <pythonVersion>3.9.13</pythonVersion>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>3.0.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>3.0.0-M6</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.bitbucket.cpointe.habushu</groupId>
+                <artifactId>habushu-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <!-- During release preparation, Habushu will automatically update the versions of Habushu modules
+                        within their pyproject.toml configurations, however the maven-release-plugin will only commit
+                        updates to pom.xml files.  In order to version control both pom.xml and pyproject.toml files
+                        that are updated during release preparation, customize the preparation and completion goals
+                        to additionally execute the scm:checkin goals -->
+                    <preparationGoals>clean verify scm:checkin -Dmessage="[maven-release-plugin] prepare release"
+                    </preparationGoals>
+                    <completionGoals>clean verify scm:checkin -Dmessage="[maven-release-plugin] prepare for next
+                        development iteration"
+                    </completionGoals>
+                    <goals>deploy</goals>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

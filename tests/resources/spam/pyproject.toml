@@ -1,0 +1,6 @@
+[tool.poetry]
+name = "spam"
+version = "1.2.3.dev"
+description = "Some description."
+authors = ["Some Developer <developer@email.com>"]
+license = "MIT"

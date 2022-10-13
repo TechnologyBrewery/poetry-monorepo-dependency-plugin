@@ -1,0 +1,6 @@
+[tool.poetry]
+name = "eggs"
+version = "1.0rc4"
+description = "Some description."
+authors = ["Some Developer <developer@email.com>"]
+license = "MIT"
