@@ -95,8 +95,14 @@ class MonorepoDependencyPlugin(poetry.plugins.application_plugin.ApplicationPlug
             "publish-rewrite-path-deps", lambda: PublishWithVersionedPathDepsCommand()
         )
 
+        try:
+            local_poetry_proj_config = application.poetry.pyproject.data
+        except RuntimeError:
+            # We're not in a Poetry project directory
+            return
+
         plugin_config = _merge_dicts(
-            _default_plugin_config(), application.poetry.pyproject.data
+            _default_plugin_config(), local_poetry_proj_config
         )["tool"]["poetry-monorepo-dependency-plugin"]
 
         # If the [tool.poetry-monorepo-dependency-plugin.enable] flag has not been set
