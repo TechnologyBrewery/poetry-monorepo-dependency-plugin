@@ -58,14 +58,7 @@ class PublishWithVersionedPathDepsCommand(PublishCommand):
         "in which path dependencies to other Poetry projects are re-written as versioned package "
         "dependencies that are resolvable via a private package repository source"
     )
-    options = [
-        *PublishCommand.options,
-        option(
-            "rewrite-path-dependencies",
-            None,
-            "Rewrites any path dependencies as versioned dependencies",
-        ),
-    ]
+    options = [*PublishCommand.options, _version_pinning_strategy]
 
     def handle(self) -> int:
         path_dependency_writer = PathDependencyRewriter(
