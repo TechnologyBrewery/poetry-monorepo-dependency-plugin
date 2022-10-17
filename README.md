@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/mit)
 
 Forked and inspired by the [poetry-stickywheel-plugin](https://github.com/artisanofcode/poetry-stickywheel-plugin), this
-Poetry[poetry] plugin facilitates the usage of more complex monorepo project structures by pinning version dependencies when 
+[Poetry][poetry] plugin facilitates the usage of more complex monorepo project structures by pinning version dependencies when 
 building and publishing archives with local path dependencies to other Poetry projects within the same monorepo.
 
 ## Installation
