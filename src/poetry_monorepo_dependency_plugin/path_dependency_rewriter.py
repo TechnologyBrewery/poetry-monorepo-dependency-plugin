@@ -105,7 +105,12 @@ class PathDependencyRewriter:
         elif self._version_pinning_strategy == "mixed":
             parsed_version = Version.parse(version)
             if parsed_version.is_unstable():
-                pinned_version = f"^{version}"
+                # For any dev or pre-releases, use the next patch version as the upper-bound
+                # in order to provide better compatibility with pip-based version ordering
+                next_patch_version = parsed_version.replace(
+                    dev=None, pre=None
+                ).next_patch()
+                pinned_version = f">={version},<{next_patch_version}"
 
         return Dependency(
             name,
