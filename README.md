@@ -79,8 +79,9 @@ to opt-in to this plugin's modifications of the archives built and/or published 
 dependencies to other Poetry projects will be versioned in generated archives. Given a path dependency to a Poetry project 
 with version `1.2.3`, the version of the dependency referenced in the generated archive is `^1.2.3` for 
 `semver` and `=1.2.3` for `exact`.  `mixed` mode switches versioning strategies based on whether the dependency
-Poetry project version is an in-flight development version or a release - if a development version (i.e. `1.2.3.dev456`),
-`semver` is applied (i.e. `^1.2.3dev`), and if a release version (i.e. `1.2.3`), `exact` is applied (i.e. `=1.2.3`).
+Poetry project version is an in-flight development version or a release - if a development version (i.e. `1.2.3.dev456`), 
+a variant of `semver` is used that applies an upper-bound of the next patch version (i.e. `>=1.2.3.dev,<1.2.4`), and 
+if a release version (i.e. `1.2.3`), `exact` is applied (i.e. `=1.2.3`).
   
 ## Licence
 
