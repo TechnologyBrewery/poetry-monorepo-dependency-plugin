@@ -95,8 +95,8 @@ class MonorepoDependencyPlugin(poetry.plugins.application_plugin.ApplicationPlug
 
         try:
             local_poetry_proj_config = application.poetry.pyproject.data
-        except RuntimeError:
-            # We're not in a Poetry project directory
+        except Exception:
+            # We're not in a valid Poetry project directory
             return
 
         plugin_config = _merge_dicts(
