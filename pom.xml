@@ -1,16 +1,26 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.bitbucket.cpointe</groupId>
+    <parent>
+        <groupId>org.technologybrewery</groupId>
+        <artifactId>parent</artifactId>
+        <version>6</version>
+    </parent>
+
+    <groupId>org.technologybrewery</groupId>
     <artifactId>poetry-monorepo-dependency-plugin</artifactId>
     <version>1.0.6-SNAPSHOT</version>
     <packaging>habushu</packaging>
 
     <name>Poetry Monorepo Dependency Plugin</name>
-    <description>Poetry plugin facilitating the usage of more complex monorepo project structures by pinning version dependencies when
-building and publishing archives with local path dependencies to other Poetry projects within the same monorepo</description>
+    <description>
+        Poetry plugin facilitating the usage of more complex monorepo project structures by pinning version dependencies
+        when building and publishing archives with local path dependencies to other Poetry projects within the same
+        monorepo
+    </description>
 
-    <url>https://bitbucket.org/cpointe/poetry-monorepo-dependency-plugin/</url>
+    <url>https://github.com/TechnologyBrewery/poetry-monorepo-dependency-plugin/</url>
     <inceptionYear>2022</inceptionYear>
     <licenses>
         <license>
@@ -23,51 +33,42 @@ building and publishing archives with local path dependencies to other Poetry pr
     <developers>
         <developer>
             <name>Eric Konieczny</name>
-            <email>ekoniec1@cpointe-inc.com</email>
-            <organization>Counterpointe Solutions, Inc.</organization>
-            <organizationUrl>https://bitbucket.org/cpointe/</organizationUrl>
+            <email>ekoniec1@gmail.com</email>
+            <organization>Technology Brewery</organization>
+            <organizationUrl>https://github.com/TechnologyBrewery</organizationUrl>
         </developer>
     </developers>
 
     <scm>
-        <connection>scm:git:ssh://git@bitbucket.org/cpointe/poetry-monorepo-dependency-plugin.git</connection>
-        <developerConnection>scm:git:ssh://git@bitbucket.org/cpointe/poetry-monorepo-dependency-plugin.git</developerConnection>
-        <url>https://bitbucket.org/cpointe/poetry-monorepo-dependency-plugin/</url>
+        <connection>scm:git:ssh://git@github.com/TechnologyBrewery/poetry-monorepo-dependency-plugin.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/TechnologyBrewery/poetry-monorepo-dependency-plugin.git
+        </developerConnection>
+        <url>https://github.com/TechnologyBrewery/poetry-monorepo-dependency-plugin/</url>
         <tag>HEAD</tag>
     </scm>
 
     <properties>
-        <version.habushu.plugin>2.1.0</version.habushu.plugin>
+        <version.habushu.plugin>2.7.0</version.habushu.plugin>
     </properties>
 
     <build>
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>org.bitbucket.cpointe.habushu</groupId>
+                    <groupId>org.technologybrrewery.habushu</groupId>
                     <artifactId>habushu-maven-plugin</artifactId>
                     <version>${version.habushu.plugin}</version>
-                    <extensions>true</extensions>
                     <configuration>
-                        <pythonVersion>3.9.13</pythonVersion>
+                        <pythonVersion>3.11.4</pythonVersion>
                     </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>3.0.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>3.0.0-M6</version>
                 </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
             <plugin>
-                <groupId>org.bitbucket.cpointe.habushu</groupId>
+                <groupId>org.technologybrewery.habushu</groupId>
                 <artifactId>habushu-maven-plugin</artifactId>
+                <extensions>true</extensions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

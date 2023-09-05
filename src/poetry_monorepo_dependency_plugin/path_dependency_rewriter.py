@@ -1,6 +1,7 @@
 import typing
 
-import cleo.io
+import cleo.io.io
+import cleo.io.outputs.output
 from poetry.core.pyproject.toml import PyProjectTOML
 from poetry.core.semver.version import Version
 from poetry.core.packages.dependency import Dependency
@@ -87,7 +88,7 @@ class PathDependencyRewriter:
         :return: appropriately versioning package dependency equivalent of the given
         path dependency.
         """
-        pyproject_file = pyproject.file.path.parent / dependency.path / "pyproject.toml"
+        pyproject_file = pyproject.path.parent / dependency.path / "pyproject.toml"
 
         if not pyproject_file.exists():
             return dependency

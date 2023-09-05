@@ -1,8 +1,8 @@
 import unittest.mock
 from pathlib import Path
 
-import cleo
-import poetry.factory
+import cleo.io.io
+import poetry.core.factory
 from behave import *
 import nose.tools as nt
 
@@ -13,7 +13,7 @@ from poetry_monorepo_dependency_plugin.path_dependency_rewriter import (
 
 @given("a project with a local path dependencies to other Poetry projects")
 def step_impl(context):
-    project_with_local_deps = poetry.factory.Factory().create_poetry(
+    project_with_local_deps = poetry.core.factory.Factory().create_poetry(
         Path(__file__).parents[2] / "resources/project-with-local-dependencies"
     )
     context.project_with_local_deps = project_with_local_deps

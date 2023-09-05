@@ -2,13 +2,15 @@
 name = "poetry-monorepo-dependency-plugin"
 version = "1.0.6.dev"
 description = "Poetry plugin that generates more easily consumable archives for projects in a monorepo structure with path dependencies on other Poetry projects"
-authors = ["Eric Konieczny <ekonieczny@cpointe-inc.com>"]
+authors = ["Eric Konieczny <ekoniec1@gmail.com>"]
 readme = "README.md"
 repository = "https://bitbucket.org/cpointe/poetry-monorepo-dependency-plugin"
 
 [tool.poetry.dependencies]
-python = "^3.7"
-poetry = "^1.2"
+python = "^3.8"
+poetry = ">1.2"
+poetry-core = "<1.7"
+cleo = ">=2.0.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.8.0"
