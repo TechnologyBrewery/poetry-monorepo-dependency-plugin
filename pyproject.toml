@@ -8,8 +8,7 @@ repository = "https://bitbucket.org/cpointe/poetry-monorepo-dependency-plugin"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-poetry = ">1.2"
-poetry-core = "<1.7"
+poetry = ">=1.6"
 cleo = ">=2.0.1"
 
 [tool.poetry.group.dev.dependencies]
@@ -21,5 +20,5 @@ nose = "^1.3.7"
 poetry-monorepo-dependency-plugin = "poetry_monorepo_dependency_plugin.plugin:MonorepoDependencyPlugin"
 
 [build-system]
-requires = ["poetry-core>=1.2"]
+requires = ["poetry-core>=1.6"]
 build-backend = "poetry.core.masonry.api"

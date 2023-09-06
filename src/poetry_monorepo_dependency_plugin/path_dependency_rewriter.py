@@ -3,7 +3,7 @@ import typing
 import cleo.io.io
 import cleo.io.outputs.output
 from poetry.core.pyproject.toml import PyProjectTOML
-from poetry.core.semver.version import Version
+from poetry.core.constraints.version import Version
 from poetry.core.packages.dependency import Dependency
 from poetry.core.packages.directory_dependency import DirectoryDependency
 from poetry.core.packages.dependency_group import DependencyGroup
