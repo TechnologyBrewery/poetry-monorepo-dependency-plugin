@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "poetry-monorepo-dependency-plugin"
-version = "1.1.0"
+version = "1.1.1.dev"
 description = "Poetry plugin that generates more easily consumable archives for projects in a monorepo structure with path dependencies on other Poetry projects"
 authors = ["Eric Konieczny <ekoniec1@gmail.com>"]
 readme = "README.md"
