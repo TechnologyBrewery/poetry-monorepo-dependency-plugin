@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.technologybrewery</groupId>
         <artifactId>parent</artifactId>
-        <version>6</version>
+        <version>7</version>
     </parent>
 
     <groupId>org.technologybrewery</groupId>
@@ -47,7 +47,7 @@
     </scm>
 
     <properties>
-        <version.habushu.plugin>2.7.0</version.habushu.plugin>
+        <version.habushu.plugin>2.9.0</version.habushu.plugin>
     </properties>
 
     <build>
