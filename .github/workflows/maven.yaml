@@ -11,7 +11,7 @@ name: Build poetry-monorepo-dependency-plugin
 on:
     push:
         branches: [ "dev" ]
-    pull_request:
+    pull_request_target:
         branches: [ "dev" ]
 
 jobs:
