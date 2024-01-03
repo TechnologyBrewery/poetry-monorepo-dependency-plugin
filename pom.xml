@@ -51,27 +51,20 @@
     </properties>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.technologybrrewery.habushu</groupId>
-                    <artifactId>habushu-maven-plugin</artifactId>
-                    <version>${version.habushu.plugin}</version>
-                    <configuration>
-                        <pythonVersion>3.11.4</pythonVersion>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.technologybrewery.habushu</groupId>
                 <artifactId>habushu-maven-plugin</artifactId>
+                <version>${version.habushu.plugin}</version>
                 <extensions>true</extensions>
+                <configuration>
+                    <pythonVersion>3.11.4</pythonVersion>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
+                <version>3.0.1</version>
                 <configuration>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <!-- During release preparation, Habushu will automatically update the versions of Habushu modules
