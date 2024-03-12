@@ -12,14 +12,6 @@ from poetry_monorepo_dependency_plugin.path_dependency_remover import (
 )
 
 
-@given("a project with a local path dependencies to other Poetry projects")
-def step_impl(context):
-    project_with_local_deps = poetry.core.factory.Factory().create_poetry(
-        Path(__file__).parents[2] / "resources/project-with-local-dependencies"
-    )
-    context.project_with_local_deps = project_with_local_deps
-
-
 @when("the project is built using the plugin's command-line mode")
 def step_impl(context):
     path_dependency_remover = PathDependencyRemover()
