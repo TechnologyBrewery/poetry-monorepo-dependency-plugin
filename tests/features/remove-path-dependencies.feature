@@ -1,9 +1,9 @@
-Feature: Re-write path dependencies to Poetry projects as versioned package dependencies
+Feature: Remove path dependencies from Poetry projects
 
-  Scenario Outline: Re-written dependency version changes based on selected version pinning strategy
+  Scenario Outline: Remove project dependencies with paths 
     Given a project with a local path dependencies to other Poetry projects
-    When the project is built using the plugin's command-line mode with the configured "<version pinning strategy>"
-    Then the re-written dependency version for "<dependency name>" becomes "<pinned version>"
+    When the project is built using the plugin's command-line mode
+    Then the path dependencies for "<dependency name>" are no longer present in the pyproject.toml
     Examples:
       | dependency name | version pinning strategy | pinned version     |
       | spam            | mixed                    | >=1.2.3.dev,<1.2.4 |

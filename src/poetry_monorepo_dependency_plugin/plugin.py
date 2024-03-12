@@ -13,63 +13,95 @@ from poetry.console.commands.build import BuildCommand
 from poetry.console.commands.publish import PublishCommand
 
 from .path_dependency_rewriter import PathDependencyRewriter
+from .path_dependency_remover import PathDependencyRemover
 
-_version_pinning_strategy = option(
-    "version-pinning-strategy",
-    "s",
-    "Stategy to use for rewriting any path dependencies to other Poetry projects "
-    "as versioned dependencies",
-    flag=False,
-    default="mixed",
-)
-"""
-Strategy by which path dependencies to other Poetry projects will be versioned in generated archives.  Valid options 
-include 'semver', 'exact', and 'mixed', with the default being 'mixed'.  Given a path dependency to a Poetry project 
-with version '1.2.3', the version of the dependency referenced in the generated archive is '^1.2.3' for 
-'semver' and '=1.2.3' for 'exact'.  
+# _version_pinning_strategy = option(
+#     "version-pinning-strategy",
+#     "s",
+#     "Stategy to use for rewriting any path dependencies to other Poetry projects "
+#     "as versioned dependencies",
+#     flag=False,
+#     default="mixed",
+# )
+# """
+# Strategy by which path dependencies to other Poetry projects will be versioned in generated archives.  Valid options
+# include 'semver', 'exact', and 'mixed', with the default being 'mixed'.  Given a path dependency to a Poetry project
+# with version '1.2.3', the version of the dependency referenced in the generated archive is '^1.2.3' for
+# 'semver' and '=1.2.3' for 'exact'.
 
-'mixed' mode switches versioning strategies based on whether or not the dependency
-Poetry project version is an in-flight development version or a release:
+# 'mixed' mode switches versioning strategies based on whether or not the dependency
+# Poetry project version is an in-flight development version or a release:
 
-If a development version (i.e. '1.2.3.dev456'), a variant of 'semver' is used that applies an upper-bound of the next 
-patch version (i.e. '>=1.2.3.dev,<1.2.4') 
-If a release version (i.e. '1.2.3'), 'exact' is applied (i.e. '=1.2.3').   
-"""
+# If a development version (i.e. '1.2.3.dev456'), a variant of 'semver' is used that applies an upper-bound of the next
+# patch version (i.e. '>=1.2.3.dev,<1.2.4')
+# If a release version (i.e. '1.2.3'), 'exact' is applied (i.e. '=1.2.3').
+# """
 
 
-class BuildWithVersionedPathDepsCommand(BuildCommand):
-    name = "build-rewrite-path-deps"
+# class BuildWithVersionedPathDepsCommand(BuildCommand):
+#     name = "build-rewrite-path-deps"
+#     description = (
+#         "Extends the 'build' command to generate archives in which path dependencies to "
+#         "other Poetry projects are re-written as versioned package dependencies that are "
+#         "resolvable via a private package repository source"
+#     )
+#     options = [*BuildCommand.options, _version_pinning_strategy]
+
+#     def handle(self) -> int:
+#         path_dependency_writer = PathDependencyRewriter(
+#             self.option("version-pinning-strategy")
+#         )
+#         path_dependency_writer.update_dependency_group(
+#             self.io, self.poetry.pyproject, self.poetry.package.dependency_group("main")
+#         )
+#         return super().handle()
+
+
+# class PublishWithVersionedPathDepsCommand(PublishCommand):
+#     name = "publish-rewrite-path-deps"
+#     description = (
+#         "Extends the 'publish' command to build (if specified via the --build option) and publish archives "
+#         "in which path dependencies to other Poetry projects are re-written as versioned package "
+#         "dependencies that are resolvable via a private package repository source"
+#     )
+#     options = [*PublishCommand.options, _version_pinning_strategy]
+
+#     def handle(self) -> int:
+#         path_dependency_writer = PathDependencyRewriter(
+#             self.option("version-pinning-strategy")
+#         )
+#         path_dependency_writer.update_dependency_group(
+#             self.io, self.poetry.pyproject, self.poetry.package.dependency_group("main")
+#         )
+#         return super().handle()
+
+
+class BuildWithoutPathDepsCommand(BuildCommand):
+    name = "build-without-path-deps"
     description = (
         "Extends the 'build' command to generate archives in which path dependencies to "
-        "other Poetry projects are re-written as versioned package dependencies that are "
-        "resolvable via a private package repository source"
+        "other Poetry projects are removed from package dependencies."
     )
-    options = [*BuildCommand.options, _version_pinning_strategy]
 
     def handle(self) -> int:
-        path_dependency_writer = PathDependencyRewriter(
-            self.option("version-pinning-strategy")
-        )
-        path_dependency_writer.update_dependency_group(
+        path_dependency_remover = PathDependencyRemover()
+        path_dependency_remover.update_dependency_group(
             self.io, self.poetry.pyproject, self.poetry.package.dependency_group("main")
         )
         return super().handle()
 
 
-class PublishWithVersionedPathDepsCommand(PublishCommand):
-    name = "publish-rewrite-path-deps"
+class PublishWithoutPathDepsCommand(PublishCommand):
+    name = "publish-without-path-deps"
     description = (
         "Extends the 'publish' command to build (if specified via the --build option) and publish archives "
-        "in which path dependencies to other Poetry projects are re-written as versioned package "
+        "in which path dependencies to other Poetry projects are removed from the package "
         "dependencies that are resolvable via a private package repository source"
     )
-    options = [*PublishCommand.options, _version_pinning_strategy]
 
     def handle(self) -> int:
-        path_dependency_writer = PathDependencyRewriter(
-            self.option("version-pinning-strategy")
-        )
-        path_dependency_writer.update_dependency_group(
+        path_dependency_remover = PathDependencyRemover()
+        path_dependency_remover.update_dependency_group(
             self.io, self.poetry.pyproject, self.poetry.package.dependency_group("main")
         )
         return super().handle()
@@ -87,25 +119,16 @@ class MonorepoDependencyPlugin(poetry.plugins.application_plugin.ApplicationPlug
 
     def activate(self, application: poetry.console.application.Application):
         application.command_loader.register_factory(
-            "build-rewrite-path-deps", lambda: BuildWithVersionedPathDepsCommand()
+            "build-without-path-deps", lambda: BuildWithoutPathDepsCommand()
         )
         application.command_loader.register_factory(
-            "publish-rewrite-path-deps", lambda: PublishWithVersionedPathDepsCommand()
+            "publish-without-path-deps", lambda: PublishWithoutPathDepsCommand()
         )
 
         try:
             local_poetry_proj_config = application.poetry.pyproject.data
         except Exception:
             # We're not in a valid Poetry project directory
-            return
-
-        plugin_config = _merge_dicts(
-            _default_plugin_config(), local_poetry_proj_config
-        )["tool"]["poetry-monorepo-dependency-plugin"]
-
-        # If the [tool.poetry-monorepo-dependency-plugin.enable] flag has not been set
-        # in pyproject.toml, do *not* intercept and modify build/publish commands
-        if not plugin_config["enable"]:
             return
 
         application.event_dispatcher.add_listener(
@@ -124,10 +147,8 @@ class MonorepoDependencyPlugin(poetry.plugins.application_plugin.ApplicationPlug
         if not isinstance(event.command, self.COMMANDS):
             return
 
-        path_dependency_writer = PathDependencyRewriter(
-            self.plugin_config["version-pinning-strategy"]
-        )
-        path_dependency_writer.update_dependency_group(
+        path_dependency_remover = PathDependencyRemover()
+        path_dependency_remover.update_dependency_group(
             event.io,
             self.poetry.pyproject,
             self.poetry.package.dependency_group("main"),
