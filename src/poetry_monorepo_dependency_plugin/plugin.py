@@ -11,6 +11,7 @@ import poetry.plugins.application_plugin
 from cleo.helpers import option
 from poetry.console.commands.build import BuildCommand
 from poetry.console.commands.publish import PublishCommand
+from poetry.console.commands.export import ExportCommand
 
 from .path_dependency_rewriter import PathDependencyRewriter
 from .path_dependency_remover import PathDependencyRemover
@@ -76,27 +77,11 @@ class PublishWithVersionedPathDepsCommand(PublishCommand):
         return super().handle()
 
 
-class BuildWithoutPathDepsCommand(BuildCommand):
-    name = "build-without-path-deps"
+class ExportWithoutPathDepsCommand(ExportCommand):
+    name = "export-without-path-deps"
     description = (
-        "Extends the 'build' command to generate archives in which path dependencies to "
+        "Extends the 'export' command to generate exports in which path dependencies to "
         "other Poetry projects are removed from package dependencies."
-    )
-
-    def handle(self) -> int:
-        path_dependency_remover = PathDependencyRemover()
-        path_dependency_remover.update_dependency_group(
-            self.io, self.poetry.pyproject, self.poetry.package.dependency_group("main")
-        )
-        return super().handle()
-
-
-class PublishWithoutPathDepsCommand(PublishCommand):
-    name = "publish-without-path-deps"
-    description = (
-        "Extends the 'publish' command to build (if specified via the --build option) and publish archives "
-        "in which path dependencies to other Poetry projects are removed from the package "
-        "dependencies that are resolvable via a private package repository source"
     )
 
     def handle(self) -> int:
@@ -111,6 +96,7 @@ class MonorepoDependencyPlugin(poetry.plugins.application_plugin.ApplicationPlug
     COMMANDS = (
         BuildCommand,
         PublishCommand,
+        ExportCommand,
     )
 
     def __init__(self):
@@ -119,16 +105,28 @@ class MonorepoDependencyPlugin(poetry.plugins.application_plugin.ApplicationPlug
 
     def activate(self, application: poetry.console.application.Application):
         application.command_loader.register_factory(
-            "build-without-path-deps", lambda: BuildWithoutPathDepsCommand()
+            "build-rewrite-path-deps", lambda: BuildWithVersionedPathDepsCommand()
         )
         application.command_loader.register_factory(
-            "publish-without-path-deps", lambda: PublishWithoutPathDepsCommand()
+            "publish-rewrite-path-deps", lambda: PublishWithVersionedPathDepsCommand()
+        )
+        application.command_loader.register_factory(
+            "export-without-path-deps", lambda: ExportWithoutPathDepsCommand()
         )
 
         try:
             local_poetry_proj_config = application.poetry.pyproject.data
         except Exception:
             # We're not in a valid Poetry project directory
+            return
+
+        plugin_config = _merge_dicts(
+            _default_plugin_config(), local_poetry_proj_config
+        )["tool"]["poetry-monorepo-dependency-plugin"]
+
+        # If the [tool.poetry-monorepo-dependency-plugin.enable] flag has not been set
+        # in pyproject.toml, do *not* intercept and modify build/publish commands
+        if not plugin_config["enable"]:
             return
 
         application.event_dispatcher.add_listener(
@@ -147,8 +145,10 @@ class MonorepoDependencyPlugin(poetry.plugins.application_plugin.ApplicationPlug
         if not isinstance(event.command, self.COMMANDS):
             return
 
-        path_dependency_remover = PathDependencyRemover()
-        path_dependency_remover.update_dependency_group(
+        path_dependency_writer = PathDependencyRewriter(
+            self.plugin_config["version-pinning-strategy"]
+        )
+        path_dependency_writer.update_dependency_group(
             event.io,
             self.poetry.pyproject,
             self.poetry.package.dependency_group("main"),

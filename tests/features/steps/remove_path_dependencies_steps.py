@@ -12,7 +12,7 @@ from poetry_monorepo_dependency_plugin.path_dependency_remover import (
 )
 
 
-@when("the project is built using the plugin's command-line mode")
+@when("the project is exported using the plugin's command-line mode")
 def step_impl(context):
     path_dependency_remover = PathDependencyRemover()
     mock_io = unittest.mock.create_autospec(cleo.io.io.IO)
@@ -24,7 +24,7 @@ def step_impl(context):
 
 
 @then(
-    'the path dependencies for "{dependency_name}" are no longer present in the pyproject.toml'
+    'the path dependencies for "{dependency_name}" are removed from poetry dependencies'
 )
 def step_impl(context, dependency_name):
     mydependencies = context.project_with_local_deps.package.dependency_group(
