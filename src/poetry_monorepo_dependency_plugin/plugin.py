@@ -11,7 +11,8 @@ import poetry.plugins.application_plugin
 from cleo.helpers import option
 from poetry.console.commands.build import BuildCommand
 from poetry.console.commands.publish import PublishCommand
-from poetry.console.commands.export import ExportCommand
+from poetry.console.commands.export import ExportCommand as BuiltInExportCommand
+from poetry_plugin_export.command import ExportCommand as PluginExportCommand
 
 from .path_dependency_rewriter import PathDependencyRewriter
 from .path_dependency_remover import PathDependencyRemover
@@ -77,7 +78,7 @@ class PublishWithVersionedPathDepsCommand(PublishCommand):
         return super().handle()
 
 
-class ExportWithoutPathDepsCommand(ExportCommand):
+class ExportWithoutPathDepsCommand(PluginExportCommand):
     name = "export-without-path-deps"
     description = (
         "Extends the 'export' command to generate exports in which path dependencies to "
@@ -96,7 +97,8 @@ class MonorepoDependencyPlugin(poetry.plugins.application_plugin.ApplicationPlug
     COMMANDS = (
         BuildCommand,
         PublishCommand,
-        ExportCommand,
+        BuiltInExportCommand,
+        PluginExportCommand,
     )
 
     def __init__(self):
@@ -142,17 +144,31 @@ class MonorepoDependencyPlugin(poetry.plugins.application_plugin.ApplicationPlug
         event_name: str,
         dispatcher: cleo.events.event_dispatcher.EventDispatcher,
     ) -> None:
+
         if not isinstance(event.command, self.COMMANDS):
             return
 
-        path_dependency_writer = PathDependencyRewriter(
-            self.plugin_config["version-pinning-strategy"]
+        event.io.write_line(
+            "Intercepting the command: " + str(event.command.__class__),
+            verbosity=cleo.io.outputs.output.Verbosity.NORMAL,
         )
-        path_dependency_writer.update_dependency_group(
-            event.io,
-            self.poetry.pyproject,
-            self.poetry.package.dependency_group("main"),
-        )
+
+        if isinstance(event.command, (BuiltInExportCommand, PluginExportCommand)):
+            path_dependency_remover = PathDependencyRemover()
+            path_dependency_remover.update_dependency_group(
+                event.io,
+                self.poetry.pyproject,
+                self.poetry.package.dependency_group("main"),
+            )
+        else:
+            path_dependency_writer = PathDependencyRewriter(
+                self.plugin_config["version-pinning-strategy"]
+            )
+            path_dependency_writer.update_dependency_group(
+                event.io,
+                self.poetry.pyproject,
+                self.poetry.package.dependency_group("main"),
+            )
 
 
 def _default_plugin_config() -> Mapping:
