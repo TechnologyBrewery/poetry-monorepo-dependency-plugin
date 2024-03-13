@@ -1,6 +1,6 @@
 import typing
 
-import cleo.io.io
+from cleo.io.io import IO as cleoIO
 import cleo.io.outputs.output
 from poetry.core.pyproject.toml import PyProjectTOML
 from poetry.core.constraints.version import Version
@@ -18,7 +18,7 @@ class PathDependencyRemover:
 
     def update_dependency_group(
         self,
-        io: cleo.io.io.IO,
+        io: cleoIO,
         pyproject: PyProjectTOML,
         dependency_group: DependencyGroup,
     ) -> None:
