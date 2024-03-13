@@ -150,7 +150,7 @@ class MonorepoDependencyPlugin(poetry.plugins.application_plugin.ApplicationPlug
 
         event.io.write_line(
             "Intercepting the command: " + str(event.command.__class__),
-            verbosity=cleo.io.outputs.output.Verbosity.NORMAL,
+            verbosity=cleo.io.outputs.output.Verbosity.DEBUG,
         )
 
         if isinstance(event.command, (BuiltInExportCommand, PluginExportCommand)):
