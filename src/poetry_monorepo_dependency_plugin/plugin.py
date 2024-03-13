@@ -11,8 +11,7 @@ import poetry.plugins.application_plugin
 from cleo.helpers import option
 from poetry.console.commands.build import BuildCommand
 from poetry.console.commands.publish import PublishCommand
-from poetry.console.commands.export import ExportCommand as BuiltInExportCommand
-from poetry_plugin_export.command import ExportCommand as PluginExportCommand
+from poetry_plugin_export.command import ExportCommand
 
 from .path_dependency_rewriter import PathDependencyRewriter
 from .path_dependency_remover import PathDependencyRemover
@@ -78,7 +77,7 @@ class PublishWithVersionedPathDepsCommand(PublishCommand):
         return super().handle()
 
 
-class ExportWithoutPathDepsCommand(PluginExportCommand):
+class ExportWithoutPathDepsCommand(ExportCommand):
     name = "export-without-path-deps"
     description = (
         "Extends the 'export' command to generate exports in which path dependencies to "
@@ -97,8 +96,7 @@ class MonorepoDependencyPlugin(poetry.plugins.application_plugin.ApplicationPlug
     COMMANDS = (
         BuildCommand,
         PublishCommand,
-        BuiltInExportCommand,
-        PluginExportCommand,
+        ExportCommand,
     )
 
     def __init__(self):
@@ -153,7 +151,7 @@ class MonorepoDependencyPlugin(poetry.plugins.application_plugin.ApplicationPlug
             verbosity=cleo.io.outputs.output.Verbosity.DEBUG,
         )
 
-        if isinstance(event.command, (BuiltInExportCommand, PluginExportCommand)):
+        if isinstance(event.command, ExportCommand):
             path_dependency_remover = PathDependencyRemover()
             path_dependency_remover.update_dependency_group(
                 event.io,
