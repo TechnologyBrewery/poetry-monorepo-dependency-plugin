@@ -15,8 +15,8 @@ building and publishing archives with local path dependencies to other Poetry pr
 poetry self add poetry-monorepo-dependency-plugin
 ```
 
-If you want to activate `poetry-monorepo-dependency-plugin` for all [build][poetry-build] and
-[publish][poetry-publish] command invocations, add the following to your project's `pyproject.toml`
+If you want to activate `poetry-monorepo-dependency-plugin` for all [build][poetry-build],
+[publish][poetry-publish], and [export][poetry-export] command invocations, add the following to your project's `pyproject.toml`
 that has path dependencies to other Poetry projects:
 
 ```toml
@@ -57,6 +57,11 @@ When generating `wheel` or `sdist` archives for the `spam` project through Poetr
 `ham` project were declared as `ham = "1.2.3"`.  As a result, package metadata in archives for `spam` will shift from
 `Requires-Dist: ham @ ../ham` to `Requires-Dist: ham (==1.2.3)`
 
+Additionally, to address [path dependencies](https://python-poetry.org/docs/dependency-specification/#path-dependencies) not being portable, this plugin provides
+the ability to extend Poetry's [export][poetry-export] command using the `export-without-path-deps` command. This command will exclude path dependencies from being written to intermediate `requirements.txt` export. When installing the exported 
+`requirements.txt` on another machine and/or Docker container local Paths dependencies can not be resolved and therefore can not 
+be installed so they are removed. 
+
 ### Command line mode
 
 If you need greater control over when `poetry-monorepo-dependency-plugin` is activated, this plugin exposes new `build-rewrite-path-deps`
@@ -66,6 +71,11 @@ any configuration defined in the project's `pyproject.toml` `[tool.poetry-monore
 (other than `enable`) are exposed as command line options.  For example:
 ```commandline
 poetry build-rewrite-path-deps --version-pinning-strategy=semver
+```
+
+To generate a `requirements.txt` without path dependencies use the `export-without-path-deps`. For example:
+```commandline
+poetry export-without-path-deps -f requirements.txt --output requirements.txt
 ```
 
 ### Configuration
@@ -113,5 +123,6 @@ the package to PyPI.
 
 [poetry]: https://python-poetry.org/
 [poetry-build]: https://python-poetry.org/docs/cli/#build
+[poetry-export]: https://python-poetry.org/docs/cli/#export
 [poetry-publish]: https://python-poetry.org/docs/cli/#publish
 [mit_licence]: http://dan.mit-license.org/
