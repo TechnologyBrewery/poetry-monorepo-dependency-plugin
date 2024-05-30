@@ -51,3 +51,4 @@ Thumbs.db
 /poetry-monorepo-dependency-plugin.iml
 /.python-version
 /poetry.lock
+/.venv

@@ -10,7 +10,7 @@ from poetry.core.packages.dependency_group import DependencyGroup
 
 
 def _validate_pinning_strategy(strategy):
-    if not strategy in ["mixed", "semver", "exact"]:
+    if strategy not in ["mixed", "semver", "exact"]:
         raise ValueError(f"Invalid version pinning strategy: {strategy}")
 
 

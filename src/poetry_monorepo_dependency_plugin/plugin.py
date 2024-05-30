@@ -19,7 +19,7 @@ from .path_dependency_remover import PathDependencyRemover
 _version_pinning_strategy = option(
     "version-pinning-strategy",
     "s",
-    "Stategy to use for rewriting any path dependencies to other Poetry projects "
+    "Strategy to use for rewriting any path dependencies to other Poetry projects "
     "as versioned dependencies",
     flag=False,
     default="mixed",

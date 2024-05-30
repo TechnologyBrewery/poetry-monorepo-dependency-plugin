@@ -1,8 +1,9 @@
 # Poetry Monorepo Dependency Plugin
 
-[![PyPI](https://img.shields.io/pypi/v/poetry-monorepo-dependency-plugin)](https://pypi.org/project/poetry-monorepo-dependency-plugin/)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/poetry-monorepo-dependency-plugin)
-![PyPI - Wheel](https://img.shields.io/pypi/wheel/poetry-monorepo-dependency-plugin)
+[![PyPI](https://img.shields.io/pypi/v/poetry-monorepo-dependency-plugin?logo=python&logoColor=gold)](https://pypi.org/project/poetry-monorepo-dependency-plugin/)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/poetry-monorepo-dependency-plugin?logo=python&logoColor=gold)
+![PyPI - Wheel](https://img.shields.io/pypi/wheel/poetry-monorepo-dependency-plugin?logo=python&logoColor=gold)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/poetry-monorepo-dependency-plugin?color=blue&label=Installs&logo=pypi&logoColor=gold)](https://pypi.org/project/poetry-monorepo-dependency-plugin/)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/mit)
 
 Forked and inspired by the [poetry-stickywheel-plugin](https://github.com/artisanofcode/poetry-stickywheel-plugin), this
