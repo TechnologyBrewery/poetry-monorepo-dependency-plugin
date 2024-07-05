@@ -93,10 +93,19 @@ class ExportWithoutPathDepsCommand(ExportCommand):
 
 
 class MonorepoDependencyPlugin(poetry.plugins.application_plugin.ApplicationPlugin):
+    # Standard Poetry commands that this plugin intercepts when enabled
     COMMANDS = (
         BuildCommand,
         PublishCommand,
         ExportCommand,
+    )
+
+    # Custom commands provided by this plugin that handle their own rewriting
+    # and should not be intercepted by the event listener
+    CUSTOM_COMMANDS = (
+        BuildWithVersionedPathDepsCommand,
+        PublishWithVersionedPathDepsCommand,
+        ExportWithoutPathDepsCommand,
     )
 
     def __init__(self):
@@ -142,6 +151,10 @@ class MonorepoDependencyPlugin(poetry.plugins.application_plugin.ApplicationPlug
         event_name: str,
         dispatcher: cleo.events.event_dispatcher.EventDispatcher,
     ) -> None:
+        # Don't intercept our own custom commands (that handle their own rewriting)
+        if isinstance(event.command, self.CUSTOM_COMMANDS):
+            return
+
         if not isinstance(event.command, self.COMMANDS):
             return
 
