@@ -1,5 +1,6 @@
 import unittest.mock
 from pathlib import Path
+import json
 
 import cleo.io.io
 import poetry.core.factory
@@ -33,9 +34,9 @@ def step_impl(context, version_pinning_strategy):
 
 
 @then(
-    'the re-written dependency version for "{dependency_name}" becomes "{pinned_version}"'
+    'the re-written dependency version for "{dependency_name}" becomes "{pinned_version}", optional ("{optional}"), with extras: "{extras}"'
 )
-def step_impl(context, dependency_name, pinned_version):
+def step_impl(context, dependency_name, pinned_version, optional, extras):
     rewritten_dependency = None
     for dependency in context.project_with_local_deps.package.dependency_group(
         "main"
@@ -53,4 +54,18 @@ def step_impl(context, dependency_name, pinned_version):
         pinned_version,
         f"Re-written pinned dependency version for {dependency_name} ({rewritten_dependency.pretty_constraint}) "
         f"did not equal the expected value of {pinned_version}",
+    )
+
+    nt.assert_equal(
+        rewritten_dependency._in_extras,
+        json.loads(extras),
+        f"Re-written extra dependency for {dependency_name} ({rewritten_dependency._in_extras}) "
+        f"did not equal the expected value of {extras}",
+    )
+
+    nt.assert_equal(
+        rewritten_dependency._optional,
+        json.loads(optional),
+        f"Re-written optional status for {dependency_name} ({rewritten_dependency._optional}) "
+        f"did not equal the expected value of {optional}",
     )

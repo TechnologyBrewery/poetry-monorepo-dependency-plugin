@@ -113,8 +113,15 @@ class PathDependencyRewriter:
                 ).next_patch()
                 pinned_version = f">={version},<{next_patch_version}"
 
-        return Dependency(
+        new_dependency = Dependency(
             name,
             pinned_version,
             groups=dependency.groups,
         )
+
+        # handle cases where dependency is part of an extra.
+        if dependency.in_extras:
+            new_dependency._optional = dependency._optional
+            new_dependency._in_extras = dependency._in_extras
+
+        return new_dependency
