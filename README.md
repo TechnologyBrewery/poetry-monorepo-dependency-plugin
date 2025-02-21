@@ -5,6 +5,7 @@
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/poetry-monorepo-dependency-plugin?logo=python&logoColor=gold)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/poetry-monorepo-dependency-plugin?color=blue&label=Installs&logo=pypi&logoColor=gold)](https://pypi.org/project/poetry-monorepo-dependency-plugin/)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/mit)
+[![Build (github)](https://github.com/TechnologyBrewery/poetry-monorepo-dependency-plugin/actions/workflows/maven.yaml/badge.svg)](https://github.com/TechnologyBrewery/poetry-monorepo-dependency-plugin/actions/workflows/maven.yaml)
 
 Forked and inspired by the [poetry-stickywheel-plugin](https://github.com/artisanofcode/poetry-stickywheel-plugin), this
 [Poetry][poetry] plugin facilitates the usage of more complex monorepo project structures by pinning version dependencies when 
