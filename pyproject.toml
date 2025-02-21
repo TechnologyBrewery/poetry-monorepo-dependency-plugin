@@ -1,14 +1,17 @@
 [tool.poetry]
+repository = "https://github.com/TechnologyBrewery/poetry-monorepo-dependency-plugin"
+
+[project]
 name = "poetry-monorepo-dependency-plugin"
 version = "1.2.1.dev"
 description = "Poetry plugin that generates more easily consumable archives for projects in a monorepo structure with path dependencies on other Poetry projects"
-authors = ["Eric Konieczny <ekoniec1@gmail.com>"]
+authors = [{name = "Eric Konieczny", email = "ekoniec1@gmail.com"}]
 license = "MIT"
+requires-python = "^3.8"
+dynamic = ["version", "dependencies"]
 readme = "README.md"
-repository = "https://github.com/TechnologyBrewery/poetry-monorepo-dependency-plugin"
 
 [tool.poetry.dependencies]
-python = "^3.8"
 poetry = ">=1.6"
 poetry-plugin-export = ">=1.5.0"
 cleo = ">=2.0.1"
@@ -24,7 +27,7 @@ kappa-maki = ">=1.0.2"
 poetry-monorepo-dependency-plugin = "poetry_monorepo_dependency_plugin.plugin:MonorepoDependencyPlugin"
 
 [build-system]
-requires = ["poetry-core>=1.6.0"]
+requires = ["poetry-core>=2.0"]
 build-backend = "poetry.core.masonry.api"
 
 
