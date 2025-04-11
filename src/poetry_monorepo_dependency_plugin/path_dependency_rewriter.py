@@ -70,6 +70,24 @@ class PathDependencyRewriter:
             dependency_group.remove_dependency(dependency.name)
             dependency_group.add_dependency(pinned)
 
+    def _extract_project_info(
+        self, pyproject_toml: PyProjectTOML
+    ) -> typing.Tuple[str, str]:
+        """
+        Extracts the project name and version from the provided pyproject.toml file.
+        Supports both [tool.poetry] and [project] formats as valid sources of metadata.
+
+        :param pyproject_toml: parsed representation of the pyproject.toml file
+        :return: a tuple containing the project name and version as strings
+        """
+        tool_poetry_config = pyproject_toml.poetry_config
+        project_config = pyproject_toml.data.get("project", {})
+
+        name = tool_poetry_config.get("name") or project_config.get("name")
+        version = tool_poetry_config.get("version") or project_config.get("version")
+
+        return typing.cast(str, name), typing.cast(str, version)
+
     def _pin_dependency(
         self, pyproject: PyProjectTOML, dependency: DirectoryDependency
     ) -> Dependency:
@@ -98,8 +116,7 @@ class PathDependencyRewriter:
         if not pyproject_toml.is_poetry_project():
             return dependency
 
-        name = typing.cast(str, pyproject_toml.poetry_config["name"])
-        version = typing.cast(str, pyproject_toml.poetry_config["version"])
+        name, version = self._extract_project_info(pyproject_toml)
         pinned_version = version
         if self._version_pinning_strategy == "semver":
             pinned_version = f"^{version}"
