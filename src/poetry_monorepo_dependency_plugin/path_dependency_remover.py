@@ -6,6 +6,7 @@ from poetry.core.pyproject.toml import PyProjectTOML
 from poetry.core.constraints.version import Version
 from poetry.core.packages.dependency import Dependency
 from poetry.core.packages.directory_dependency import DirectoryDependency
+from poetry.core.packages.file_dependency import FileDependency
 from poetry.core.packages.dependency_group import DependencyGroup
 
 
@@ -13,7 +14,7 @@ class PathDependencyRemover:
     """
     Exposes core functionality for gathering a pyproject.toml's path dependencies,
     determining if they are Poetry projects, and if so, extracting the corresponding
-    dependency.
+    dependency. Handles both directory dependencies (wheels) and file dependencies (sdists).
     """
 
     def update_dependency_group(
@@ -39,9 +40,13 @@ class PathDependencyRemover:
         )
 
         for dependency in dependency_group.dependencies:
-            if not isinstance(
-                dependency,
-                DirectoryDependency,
+            # Handle both DirectoryDependency (wheels) and FileDependency (sdists)
+            if not (
+                isinstance(dependency, DirectoryDependency)
+                or (
+                    isinstance(dependency, FileDependency)
+                    and dependency.path.endswith(".tar.gz")
+                )
             ):
                 continue
 

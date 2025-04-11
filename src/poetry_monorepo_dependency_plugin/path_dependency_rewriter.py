@@ -1,4 +1,5 @@
 import typing
+import os
 
 import cleo.io.io
 import cleo.io.outputs.output
@@ -6,6 +7,7 @@ from poetry.core.pyproject.toml import PyProjectTOML
 from poetry.core.constraints.version import Version
 from poetry.core.packages.dependency import Dependency
 from poetry.core.packages.directory_dependency import DirectoryDependency
+from poetry.core.packages.file_dependency import FileDependency
 from poetry.core.packages.dependency_group import DependencyGroup
 
 
@@ -19,6 +21,7 @@ class PathDependencyRewriter:
     Exposes core functionality for gathering a pyproject.toml's path dependencies,
     determining if they are Poetry projects, and if so, extracting the corresponding
     dependency version and replacing the path dependency with its versioned equivalent.
+    Handles both directory dependencies (wheels) and file dependencies (sdists).
     """
 
     def __init__(self, version_pinning_strategy):
@@ -51,9 +54,13 @@ class PathDependencyRewriter:
         )
 
         for dependency in dependency_group.dependencies:
-            if not isinstance(
-                dependency,
-                DirectoryDependency,
+            # Handle both DirectoryDependency (wheels) and FileDependency (sdists)
+            if not (
+                isinstance(dependency, DirectoryDependency)
+                or (
+                    isinstance(dependency, FileDependency)
+                    and dependency.path.endswith(".tar.gz")
+                )
             ):
                 continue
 
@@ -89,14 +96,16 @@ class PathDependencyRewriter:
         return typing.cast(str, name), typing.cast(str, version)
 
     def _pin_dependency(
-        self, pyproject: PyProjectTOML, dependency: DirectoryDependency
+        self,
+        pyproject: PyProjectTOML,
+        dependency: typing.Union[DirectoryDependency, FileDependency],
     ) -> Dependency:
         """
         Helper method that determines if the given path dependency is for a valid Poetry
         project and if so, creates a new Dependency that has its version pinned based on
         the configured _version_pinning_strategy (and existing path related metadata
         stripped).  If the given path dependency does *not* align with a Poetry project
-        (i.e. is a path to an existing wheel), the originally provided path dependency
+        (i.e. is a path to an existing wheel or sdist), the originally provided path dependency
         will be returned.
 
         :param pyproject: encapsulates the pyproject.toml of the current project for which
@@ -106,7 +115,19 @@ class PathDependencyRewriter:
         :return: appropriately versioning package dependency equivalent of the given
         path dependency.
         """
-        pyproject_file = pyproject.path.parent / dependency.path / "pyproject.toml"
+        # Handle both DirectoryDependency and FileDependency
+        if isinstance(dependency, DirectoryDependency):
+            # For directory dependencies (wheels)
+            pyproject_file = pyproject.path.parent / dependency.path / "pyproject.toml"
+        elif isinstance(dependency, FileDependency) and dependency.path.endswith(
+            ".tar.gz"
+        ):
+            # For sdist dependencies (.tar.gz files)
+            # Extract the directory path from the file path
+            dir_path = os.path.dirname(dependency.path)
+            pyproject_file = pyproject.path.parent / dir_path / "pyproject.toml"
+        else:
+            return dependency
 
         if not pyproject_file.exists():
             return dependency
