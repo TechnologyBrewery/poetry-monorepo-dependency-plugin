@@ -25,7 +25,7 @@ jobs:
             - name: Install Python # use direct install rather than pyenv for CI for large speed improvement
               uses: actions/setup-python@v5
               with:
-                python-version: '3.11.9'
+                python-version: '3.12.9'
 
             - name: Load cached Poetry installation
               id: cached-poetry

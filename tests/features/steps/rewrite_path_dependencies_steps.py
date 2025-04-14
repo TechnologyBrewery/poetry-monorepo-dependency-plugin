@@ -5,7 +5,6 @@ import json
 import cleo.io.io
 import poetry.core.factory
 from behave import given, when, then  # pylint: disable=no-name-in-module
-import nose.tools as nt
 
 from poetry_monorepo_dependency_plugin.path_dependency_rewriter import (
     PathDependencyRewriter,
@@ -45,27 +44,21 @@ def step_impl(context, dependency_name, pinned_version, optional, extras):
             rewritten_dependency = dependency
             break
 
-    nt.assert_is_not_none(
-        rewritten_dependency,
-        f"Could not find dependency on {dependency_name}",
-    )
-    nt.assert_equal(
-        rewritten_dependency.pretty_constraint,
-        pinned_version,
+    assert (
+        rewritten_dependency is not None
+    ), f"Could not find dependency on {dependency_name}"
+
+    assert rewritten_dependency.pretty_constraint == pinned_version, (
         f"Re-written pinned dependency version for {dependency_name} ({rewritten_dependency.pretty_constraint}) "
-        f"did not equal the expected value of {pinned_version}",
+        f"did not equal the expected value of {pinned_version}"
     )
 
-    nt.assert_equal(
-        rewritten_dependency._in_extras,
-        json.loads(extras),
+    assert rewritten_dependency._in_extras == json.loads(extras), (
         f"Re-written extra dependency for {dependency_name} ({rewritten_dependency._in_extras}) "
-        f"did not equal the expected value of {extras}",
+        f"did not equal the expected value of {extras}"
     )
 
-    nt.assert_equal(
-        rewritten_dependency._optional,
-        json.loads(optional),
+    assert rewritten_dependency._optional == json.loads(optional), (
         f"Re-written optional status for {dependency_name} ({rewritten_dependency._optional}) "
-        f"did not equal the expected value of {optional}",
+        f"did not equal the expected value of {optional}"
     )

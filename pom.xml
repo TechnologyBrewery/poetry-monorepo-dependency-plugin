@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.technologybrewery</groupId>
         <artifactId>parent</artifactId>
-        <version>11</version>
+        <version>12</version>
     </parent>
 
     <groupId>org.technologybrewery</groupId>
@@ -48,7 +48,7 @@
     </scm>
 
     <properties>
-        <version.habushu.plugin>2.18.0</version.habushu.plugin>
+        <version.habushu.plugin>2.18.1</version.habushu.plugin>
     </properties>
 
     <build>
@@ -59,7 +59,7 @@
                 <version>${version.habushu.plugin}</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <pythonVersion>3.11.9</pythonVersion>
+                    <pythonVersion>3.12.9</pythonVersion>
                     <useDevRepository>true</useDevRepository>
                 </configuration>
             </plugin>
