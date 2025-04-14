@@ -7,7 +7,7 @@ version = "1.2.1.dev"
 description = "Poetry plugin that generates more easily consumable archives for projects in a monorepo structure with path dependencies on other Poetry projects"
 authors = [{name = "Eric Konieczny", email = "ekoniec1@gmail.com"}]
 license = "MIT"
-requires-python = "^3.8"
+requires-python = ">=3.8,<4"
 dynamic = ["version", "dependencies"]
 readme = "README.md"
 
