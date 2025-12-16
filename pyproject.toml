@@ -17,11 +17,10 @@ poetry-plugin-export = ">=1.5.0"
 cleo = ">=2.0.1"
 
 [tool.poetry.group.dev.dependencies]
-black = ">=24.8.0"
 behave = ">=1.2.6"
 pytest = ">=7.4.0"
-pylint = ">=3.2.7"
 kappa-maki = ">=1.0.2"
+ruff = "^0.14.9"
 
 [tool.poetry.plugins."poetry.application.plugin"]
 poetry-monorepo-dependency-plugin = "poetry_monorepo_dependency_plugin.plugin:MonorepoDependencyPlugin"
