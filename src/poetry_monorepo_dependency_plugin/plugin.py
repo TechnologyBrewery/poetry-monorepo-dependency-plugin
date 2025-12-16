@@ -142,7 +142,6 @@ class MonorepoDependencyPlugin(poetry.plugins.application_plugin.ApplicationPlug
         event_name: str,
         dispatcher: cleo.events.event_dispatcher.EventDispatcher,
     ) -> None:
-
         if not isinstance(event.command, self.COMMANDS):
             return
 

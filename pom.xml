@@ -47,7 +47,7 @@
     </scm>
 
     <properties>
-        <version.habushu.plugin>2.18.1</version.habushu.plugin>
+        <version.habushu.plugin>3.3.0</version.habushu.plugin>
     </properties>
 
     <build>
