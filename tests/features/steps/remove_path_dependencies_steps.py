@@ -1,8 +1,7 @@
 import unittest.mock
-import unittest
 
 import cleo.io.io
-from behave import when, then  # pylint: disable=no-name-in-module
+from behave import when, then
 
 from poetry_monorepo_dependency_plugin.path_dependency_remover import (
     PathDependencyRemover,
@@ -28,6 +27,7 @@ def then_step_impl(context, dependency_name):
         "main"
     ).dependencies
 
-    assert dependency_name not in mydependencies, (
+    dependency_names = [dep.name for dep in mydependencies]
+    assert dependency_name not in dependency_names, (
         f"Found the path dependency {dependency_name}"
     )
