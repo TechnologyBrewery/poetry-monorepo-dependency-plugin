@@ -1,10 +1,10 @@
+import json
 import unittest.mock
 from pathlib import Path
-import json
 
 import cleo.io.io
 import poetry.core.factory
-from behave import given, when, then  # pylint: disable=no-name-in-module
+from behave import given, when, then
 
 from poetry_monorepo_dependency_plugin.path_dependency_rewriter import (
     PathDependencyRewriter,
