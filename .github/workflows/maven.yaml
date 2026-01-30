@@ -10,9 +10,15 @@ name: Build poetry-monorepo-dependency-plugin
 
 on:
     push:
-        branches: [ "dev" ]
-    pull_request_target:
-        branches: [ "dev" ]
+        branches: ["dev"]
+    pull_request:
+        branches: ["dev"]
+    workflow_dispatch:
+        inputs:
+            target_branch:
+                description: 'Branch to build (leave empty to build the workflow branch)'
+                required: false
+                type: string
 
 jobs:
     build:
@@ -21,6 +27,11 @@ jobs:
 
         steps:
             - uses: actions/checkout@v4
+              with:
+                  # For PRs: checkout the source branch, not the merge commit
+                  # For workflow_dispatch: use target_branch input if provided, otherwise the workflow branch
+                  # For push: checkout the pushed ref
+                  ref: ${{ github.event_name == 'pull_request' && github.head_ref || (github.event_name == 'workflow_dispatch' && github.event.inputs.target_branch) || github.ref }}
 
             - name: Install Python # use direct install rather than pyenv for CI for large speed improvement
               uses: actions/setup-python@v5
