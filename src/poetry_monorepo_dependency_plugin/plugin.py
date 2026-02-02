@@ -15,6 +15,7 @@ from poetry_plugin_export.command import ExportCommand
 
 from .path_dependency_rewriter import PathDependencyRewriter
 from .path_dependency_remover import PathDependencyRemover
+from .path_filtering_exporter import PathFilteringExporter
 
 _version_pinning_strategy = option(
     "version-pinning-strategy",
@@ -84,12 +85,120 @@ class ExportWithoutPathDepsCommand(ExportCommand):
         "other Poetry projects are removed from package dependencies."
     )
 
+    # Supported export formats for this command. pylock.toml is not supported because
+    # it embeds path dependencies as structured TOML data rather than file:// URLs,
+    # requiring different filtering logic that is not yet implemented.
+    SUPPORTED_FORMATS = (
+        PathFilteringExporter.FORMAT_REQUIREMENTS_TXT,
+        PathFilteringExporter.FORMAT_CONSTRAINTS_TXT,
+    )
+
     def handle(self) -> int:
-        path_dependency_remover = PathDependencyRemover()
-        path_dependency_remover.update_dependency_group(
-            self.io, self.poetry.pyproject, self.poetry.package.dependency_group("main")
+        """
+        Handle the export command using PathFilteringExporter to exclude path dependencies.
+
+        This overrides the parent's handle() method to use a custom exporter that
+        filters out file:// URLs (path dependencies) from the export output.
+        This is necessary because poetry-plugin-export 1.9.0+ reads from poetry.lock
+        instead of the in-memory dependency group.
+
+        Note: This method largely duplicates ExportCommand.handle() because the parent
+        class does not provide a factory method or hook for customizing the Exporter
+        class. Changes to the parent's handle() in future poetry-plugin-export versions
+        may need to be manually synchronized here.
+        """
+        from pathlib import Path
+
+        from packaging.utils import NormalizedName
+        from packaging.utils import canonicalize_name
+
+        fmt = self.option("format")
+
+        if fmt not in self.SUPPORTED_FORMATS:
+            supported = ", ".join(self.SUPPORTED_FORMATS)
+            self.line_error(
+                f"<error>export-without-path-deps only supports: {supported}</error>"
+            )
+            return 1
+
+        if not PathFilteringExporter.is_format_supported(fmt):
+            raise ValueError(f"Invalid export format: {fmt}")
+
+        output = self.option("output")
+
+        locker = self.poetry.locker
+        if not locker.is_locked():
+            self.line_error("<comment>The lock file does not exist. Locking.</comment>")
+            options = []
+            if self.io.is_debug():
+                options.append(("-vvv", None))
+            elif self.io.is_very_verbose():
+                options.append(("-vv", None))
+            elif self.io.is_verbose():
+                options.append(("-v", None))
+
+            self.call("lock", " ".join(options))
+
+        if not locker.is_fresh():
+            self.line_error(
+                "<error>"
+                "pyproject.toml changed significantly since poetry.lock was last"
+                " generated. Run `poetry lock` to fix the lock file."
+                "</error>"
+            )
+            return 1
+
+        if self.option("extras") and self.option("all-extras"):
+            self.line_error(
+                "<error>You cannot specify explicit"
+                " `<fg=yellow;options=bold>--extras</>` while exporting"
+                " using `<fg=yellow;options=bold>--all-extras</>`.</error>"
+            )
+            return 1
+
+        extras: list[NormalizedName]
+        if self.option("all-extras"):
+            extras = list(self.poetry.package.extras.keys())
+        else:
+            extras = [
+                canonicalize_name(extra)
+                for extra_opt in self.option("extras")
+                for extra in extra_opt.split()
+            ]
+            invalid_extras = set(extras) - self.poetry.package.extras.keys()
+            if invalid_extras:
+                raise ValueError(
+                    f"Extra [{', '.join(sorted(invalid_extras))}] is not specified."
+                )
+
+        if (
+            self.option("with") or self.option("without") or self.option("only")
+        ) and self.option("all-groups"):
+            self.line_error(
+                "<error>You cannot specify explicit"
+                " `<fg=yellow;options=bold>--with</>`, "
+                "`<fg=yellow;options=bold>--without</>`, "
+                "or `<fg=yellow;options=bold>--only</>` "
+                "while exporting using `<fg=yellow;options=bold>--all-groups</>`.</error>"
+            )
+            return 1
+
+        groups = (
+            self.poetry.package.dependency_group_names(include_optional=True)
+            if self.option("all-groups")
+            else self.activated_groups
         )
-        return super().handle()
+
+        # Use PathFilteringExporter instead of the default Exporter
+        exporter = PathFilteringExporter(self.poetry, self.io)
+        exporter.only_groups(list(groups))
+        exporter.with_extras(extras)
+        exporter.with_hashes(not self.option("without-hashes"))
+        exporter.with_credentials(self.option("with-credentials"))
+        exporter.with_urls(not self.option("without-urls"))
+        exporter.export(fmt, Path.cwd(), output or self.io)
+
+        return 0
 
 
 class MonorepoDependencyPlugin(poetry.plugins.application_plugin.ApplicationPlugin):
